@@ -67,10 +67,50 @@ namespace IdzIDE
 
         private void editor_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar = '(')
+            if (e.KeyChar == '(')
             {
+                editor.SelectedText = "()";
+                editor.SelectionStart--;
+                e.Handled = true;
 
             }
+            if (e.KeyChar == '{')
+            {
+                editor.SelectedText = "{}";
+                editor.SelectionStart--;
+                e.Handled = true;
+            }
+            if (e.KeyChar == '[')
+            {
+                editor.SelectedText = "[]";
+                editor.SelectionStart--;
+                e.Handled = true;
+            }
+            if(e.KeyChar == '"')
+            {
+                editor.SelectedText = "\"\"";
+                editor.SelectionStart--;
+                e.Handled = true;
+            }
+            if(e.KeyChar == '\'')
+            {
+                editor.SelectedText = "''";
+                editor.SelectionStart--;
+                e.Handled = true;
+            }
         }
+
+        string[] keywords =
+        {
+            "if", "else", "for", "while", "switch", "case", "break", "continue",
+            "class", "struct", "interface", "enum", "namespace", "using", "public",
+            "static", "void", "return", "new", "try",
+        };
+        string[] types =
+        {
+            "int", "string", "bool", "float", "double", "decimal", "char", "object",
+            "var", "dynamic", "void"
+        };
+
     }
 }
