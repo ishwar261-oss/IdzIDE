@@ -125,6 +125,20 @@ namespace IdzIDE
              editor.SelectionColor = Color.DeepSkyBlue;
          }
      }
+      private void HighlightTypes()
+ {
+     foreach(string type in types)
+     {
+         MatchCollection matches =
+             Regex.Matches(editor.Text, $@"\b{type}\b");
+
+         foreach(Match match in matches)
+         {
+             editor.Select(match.Index, match.Length);
+             editor.SelectionColor = Color.Cyan;
+         }
+     }
+ }
  }
 
     }
