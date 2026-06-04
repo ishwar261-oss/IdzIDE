@@ -149,6 +149,31 @@ namespace IdzIDE
              editor.SelectionColor = Color.Orange;
          }
      }
+     private void HighlightNumbers()
+{
+    MatchCollection matches =
+        Regex.Matches(editor.Text, @"\b\d+\b");
+
+    foreach (Match match in matches)
+    {
+        editor.Select(match.Index, match.Length);
+        editor.SelectionColor = Color.White;
+    }
+}
+private void HighlightComments()
+{
+    MatchCollection matches =
+        Regex.Matches(
+            editor.Text,
+            @"//.*?$",
+            RegexOptions.Multiline);
+
+    foreach (Match match in matches)
+    {
+        editor.Select(match.Index, match.Length);
+        editor.SelectionColor = Color.Green;
+    }
+}
  }
  }
 
