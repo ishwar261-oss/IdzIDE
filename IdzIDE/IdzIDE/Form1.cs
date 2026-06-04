@@ -112,5 +112,20 @@ namespace IdzIDE
             "var", "dynamic", "void"
         };
 
+         private void HighlightKeywords()
+ {
+     foreach (var keyword in keywords)
+     {
+         MatchCollection matches =
+             Regex.Matches(editor.Text, $@"\b{keyword}\b");
+
+         foreach (Match match in matches)
+         {
+             editor.Select(match.Index, match.Length);
+             editor.SelectionColor = Color.DeepSkyBlue;
+         }
+     }
+ }
+
     }
 }
