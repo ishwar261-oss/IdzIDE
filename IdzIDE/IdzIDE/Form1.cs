@@ -138,6 +138,17 @@ namespace IdzIDE
              editor.SelectionColor = Color.Cyan;
          }
      }
+          private void HighlightStrings()
+     {
+         MatchCollection matches =
+             Regex.Matches(editor.Text, "\".*?\"");
+
+         foreach(Match match in matches)
+         {
+             editor.Select(match.Index, match.Length);
+             editor.SelectionColor = Color.Orange;
+         }
+     }
  }
  }
 
