@@ -1,5 +1,7 @@
 using System.IO;
 using System.Drawing;
+using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
 namespace IdzIDE
 {
@@ -63,6 +65,8 @@ namespace IdzIDE
         {
             lblLines.Text = $"Ln : {editor.Lines.Length}";
             lblChars.Text = $"Ch : {editor.TextLength}";
+
+            HighlightSyntax();
         }
 
         private void editor_KeyPress(object sender, KeyPressEventArgs e)
@@ -86,13 +90,13 @@ namespace IdzIDE
                 editor.SelectionStart--;
                 e.Handled = true;
             }
-            if(e.KeyChar == '"')
+            if (e.KeyChar == '"')
             {
                 editor.SelectedText = "\"\"";
                 editor.SelectionStart--;
                 e.Handled = true;
             }
-            if(e.KeyChar == '\'')
+            if (e.KeyChar == '\'')
             {
                 editor.SelectedText = "''";
                 editor.SelectionStart--;
@@ -100,82 +104,106 @@ namespace IdzIDE
             }
         }
 
-        string[] keywords =
+        private readonly string[] keywords =
         {
             "if", "else", "for", "while", "switch", "case", "break", "continue",
             "class", "struct", "interface", "enum", "namespace", "using", "public",
-            "static", "void", "return", "new", "try",
+            "static", "void", "return", "new", "try","usingnamespace",
         };
-        string[] types =
+        private readonly string[] types =
         {
             "int", "string", "bool", "float", "double", "decimal", "char", "object",
-            "var", "dynamic", "void"
+            "var", "dynamic", "void","include"
         };
 
-         private void HighlightKeywords()
- {
-     foreach (var keyword in keywords)
-     {
-         MatchCollection matches =
-             Regex.Matches(editor.Text, $@"\b{keyword}\b");
+        private void HighlightSyntax()
+        {
+            int cursorPos = editor.SelectionStart;
 
-         foreach (Match match in matches)
-         {
-             editor.Select(match.Index, match.Length);
-             editor.SelectionColor = Color.DeepSkyBlue;
-         }
-     }
-      private void HighlightTypes()
- {
-     foreach(string type in types)
-     {
-         MatchCollection matches =
-             Regex.Matches(editor.Text, $@"\b{type}\b");
+            editor.SuspendLayout();
 
-         foreach(Match match in matches)
-         {
-             editor.Select(match.Index, match.Length);
-             editor.SelectionColor = Color.Cyan;
-         }
-     }
-          private void HighlightStrings()
-     {
-         MatchCollection matches =
-             Regex.Matches(editor.Text, "\".*?\"");
+            editor.SelectAll();
 
-         foreach(Match match in matches)
-         {
-             editor.Select(match.Index, match.Length);
-             editor.SelectionColor = Color.Orange;
-         }
-     }
-     private void HighlightNumbers()
-{
-    MatchCollection matches =
-        Regex.Matches(editor.Text, @"\b\d+\b");
+            HighlightComments();
+            HighlightStrings();
+            HighlightNumbers();
+            HighlightTypes();
+            HighlightKeywords();
 
-    foreach (Match match in matches)
-    {
-        editor.Select(match.Index, match.Length);
-        editor.SelectionColor = Color.White;
-    }
-}
-private void HighlightComments()
-{
-    MatchCollection matches =
-        Regex.Matches(
-            editor.Text,
-            @"//.*?$",
-            RegexOptions.Multiline);
+            editor.SelectionStart = cursorPos;
+            editor.SelectionLength = 0;
+            editor.SelectionColor = Color.White;
 
-    foreach (Match match in matches)
-    {
-        editor.Select(match.Index, match.Length);
-        editor.SelectionColor = Color.Green;
-    }
-}
- }
- }
+            editor.ResumeLayout();
+        }
+
+        private void HighlightKeywords()
+        {
+            foreach (var keyword in keywords)
+            {
+                MatchCollection matches =
+                    Regex.Matches(editor.Text, $@"\b{keyword}\b");
+
+                foreach (Match match in matches)
+                {
+                    editor.Select(match.Index, match.Length);
+                    editor.SelectionColor = Color.DeepSkyBlue;
+                }
+            }
+        }
+
+        private void HighlightTypes()
+        {
+            foreach(string type in types)
+            {
+                MatchCollection matches =
+                    Regex.Matches(editor.Text, $@"\b{type}\b");
+
+                foreach(Match match in matches)
+                {
+                    editor.Select(match.Index, match.Length);
+                    editor.SelectionColor = Color.Cyan;
+                }
+            }
+        }
+
+        private void HighlightStrings()
+        {
+            MatchCollection matches =
+                Regex.Matches(editor.Text, "\".*?\"");
+
+            foreach(Match match in matches)
+            {
+                editor.Select(match.Index, match.Length);
+                editor.SelectionColor = Color.Orange;
+            }
+        }
+
+        private void HighlightNumbers()
+        {
+            MatchCollection matches =
+                Regex.Matches(editor.Text, @"\b\d+\b");
+
+            foreach (Match match in matches)
+            {
+                editor.Select(match.Index, match.Length);
+                editor.SelectionColor = Color.White;
+            }
+        }
+        private void HighlightComments()
+        {
+            MatchCollection matches =
+                Regex.Matches(
+                    editor.Text,
+                    @"//.*?$",
+                    RegexOptions.Multiline);
+
+            foreach (Match match in matches)
+            {
+                editor.Select(match.Index, match.Length);
+                editor.SelectionColor = Color.Green;
+            }
+        }
 
     }
 }
